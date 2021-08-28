@@ -51,7 +51,7 @@ const renderCountry = function (data, className = '') {
               <h4 class="country__region">${data.region}</h4>
               <p class="country__row"><span>👫</span>${(
                 +data.population / 1000000
-              ).toFixed(1)} people</p>
+              ).toFixed(1)} million people</p>
               <p class="country__row"><span>🗣️</span>${
                 data.languages[0].name
               }</p>
@@ -93,4 +93,33 @@ const getCountryAndNeighbor = function (country) {
 };
 
 // getCountryAndNeighbor('portugal');
-getCountryAndNeighbor('usa');
+// getCountryAndNeighbor('usa');
+/*
+const request = new XMLHttpRequest();
+request.open(
+  'GET',
+  `https://restcountries.eu/rest/v2/name/${country}?fullText=true`
+);
+request.send();
+*/
+
+const requestFetch = fetch(
+  `https://restcountries.eu/rest/v2/name/usa?fullText=true`
+);
+// console.log(requestFetch);
+
+const getCountryDataFetch = function (country) {
+  fetch(`https://restcountries.eu/rest/v2/name/${country}?fullText=true`)
+    .then(response => response.json())
+    .then(data => {
+      renderCountry(data[0]);
+      const neighbor = data[0].borders[0];
+      if (!neighbor) return;
+      //Neighbor Country
+      return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbor}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbor'));
+};
+
+getCountryDataFetch(`usa`);
