@@ -102,24 +102,49 @@ request.open(
 );
 request.send();
 */
-
+const renderError = function (msg) {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  countriesContainer.style.opacity = 1;
+};
 const requestFetch = fetch(
   `https://restcountries.eu/rest/v2/name/usa?fullText=true`
 );
 // console.log(requestFetch);
+const getJSON = function (url) {
+  fetch(url).then(response => {
+    if (!response.ok) throw new Error(`Country not found ${response.status}`);
+
+    return response.json();
+  });
+};
 
 const getCountryDataFetch = function (country) {
   fetch(`https://restcountries.eu/rest/v2/name/${country}?fullText=true`)
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) throw new Error(`Country not found ${response.status}`);
+
+      return response.json();
+    })
     .then(data => {
       renderCountry(data[0]);
       const neighbor = data[0].borders[0];
       if (!neighbor) return;
       //Neighbor Country
+
       return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbor}`);
     })
     .then(response => response.json())
-    .then(data => renderCountry(data, 'neighbor'));
+    .then(data => renderCountry(data, 'neighbor'))
+    .catch(err => {
+      renderError(`Something went wrong 🧨🧨🧨 ${err}`);
+      console.error(`${err}--Wrong info entered🧨🧨🧨`);
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
 };
-
+btn.addEventListener('click', function () {
+  getCountryDataFetch('mexico');
+});
 getCountryDataFetch(`usa`);
+// getCountryDataFetch('ksdnjfsknf');
