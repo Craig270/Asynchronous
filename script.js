@@ -148,3 +148,15 @@ btn.addEventListener('click', function () {
 });
 getCountryDataFetch(`usa`);
 // getCountryDataFetch('ksdnjfsknf');
+
+//Building a Simple Promise
+
+const lotteryPromise = new Promise(function (resolve, reject) {
+  if (Math.random() >= 0.5) {
+    resolve(`You win`);
+  } else {
+    reject(`You lost`);
+  }
+});
+
+lotteryPromise.then((res = console.log(res)).catch(err => console.log(err)));
